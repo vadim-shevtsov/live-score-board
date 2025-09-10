@@ -16,6 +16,11 @@ export const ScoreboardView: React.FC = () => {
     setMatches(board.getSummary());
   };
 
+  const handleFinish = (id: string) => {
+    board.finishMatch(id);
+    setMatches(board.getSummary());
+  };
+
   return (
     <div>
       <h2>Live Football World Cup Scoreboard</h2>
@@ -45,6 +50,7 @@ export const ScoreboardView: React.FC = () => {
         {matches.map((m) => (
           <li key={m.id}>
             {m.home} {m.homeScore} - {m.away} {m.awayScore}
+            <button onClick={() => handleFinish(m.id)}>Finish Match</button>
           </li>
         ))}
       </ul>

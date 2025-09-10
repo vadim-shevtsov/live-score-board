@@ -26,6 +26,10 @@ export class Scoreboard {
     this.matches.push(match);
   }
 
+  finishMatch(id: string) {
+    this.matches = this.matches.filter((m) => m.id !== id);
+  }
+
   getSummary(): Match[] {
     return [...this.matches].sort((a, b) => {
       const totalA = a.homeScore + a.awayScore;

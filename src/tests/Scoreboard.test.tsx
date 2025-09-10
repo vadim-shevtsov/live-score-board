@@ -7,16 +7,16 @@ describe("ScoreboardView", () => {
     render(<ScoreboardView />);
 
     fireEvent.change(screen.getByLabelText(/home team/i), {
-      target: { value: "Brasil" },
+      target: { value: "Mexico" },
     });
     fireEvent.change(screen.getByLabelText(/away team/i), {
-      target: { value: "Italy" },
+      target: { value: "Canada" },
     });
 
     fireEvent.click(screen.getByRole("button", { name: /start match/i }));
 
     expect(
-      screen.getByText(/brasil 0 - italy 0/i)
+      screen.getByText(/mexico 0 - canada 0/i)
     ).toBeInTheDocument();
   });
 
@@ -25,5 +25,23 @@ describe("ScoreboardView", () => {
     fireEvent.click(screen.getByRole("button", { name: /start match/i }));
 
     expect(screen.queryByText(/0 -/)).not.toBeInTheDocument();
+  });
+
+  it("allows finishing a match (removes it from summary)", () => {
+    render(<ScoreboardView />);
+
+    fireEvent.change(screen.getByLabelText(/home team/i), {
+      target: { value: "Mexico" },
+    });
+    fireEvent.change(screen.getByLabelText(/away team/i), {
+      target: { value: "Canada" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /start match/i }));
+    expect(screen.getByText(/mexico 0 - canada 0/i)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /finish match/i }));
+
+    // the match should disappear after clicking finish
+    expect(screen.queryByText(/mexico 0 - canada 0/i)).not.toBeInTheDocument();
   });
 });
