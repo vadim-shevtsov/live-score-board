@@ -30,6 +30,14 @@ export class Scoreboard {
     this.matches = this.matches.filter((m) => m.id !== id);
   }
 
+  updateScore(id: string, homeScore: number, awayScore: number) {
+    const match = this.matches.find((m) => m.id === id);
+    if (match && homeScore >= 0 && awayScore >= 0) {
+      match.homeScore = homeScore;
+      match.awayScore = awayScore;
+    }
+  }
+
   getSummary(): Match[] {
     return [...this.matches].sort((a, b) => {
       const totalA = a.homeScore + a.awayScore;
