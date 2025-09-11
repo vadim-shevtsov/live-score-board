@@ -3,8 +3,6 @@ import { ScoreboardView } from "../ScoreboardView";
 
 // helper to render and start a match
 const setupMatch = (home: string, away: string) => {
-  render(<ScoreboardView />);
-
   fireEvent.change(screen.getByLabelText(/home team/i), {
     target: { value: home },
   });
@@ -12,12 +10,11 @@ const setupMatch = (home: string, away: string) => {
     target: { value: away },
   });
   fireEvent.click(screen.getByRole("button", { name: /start match/i }));
-
-  return screen;
 };
 
 describe("ScoreboardView", () => {
   it("allows starting a match", () => {
+    render(<ScoreboardView />);
     setupMatch("Mexico", "Canada");
 
     expect(screen.getByText(/mexico 0 - canada 0/i)).toBeInTheDocument();
@@ -31,6 +28,7 @@ describe("ScoreboardView", () => {
   });
 
   it("allows finishing a match", () => {
+    render(<ScoreboardView />);
     setupMatch("Mexico", "Canada");
 
     fireEvent.click(screen.getByRole("button", { name: /finish match/i }));
@@ -42,6 +40,7 @@ describe("ScoreboardView", () => {
   });
 
   it("allows updating the score of an existing match", () => {
+    render(<ScoreboardView />);
     setupMatch("Mexico", "Canada");
 
     fireEvent.click(screen.getByRole("button", { name: /edit/i }));
@@ -54,6 +53,25 @@ describe("ScoreboardView", () => {
     fireEvent.click(screen.getByRole("button", { name: /update score/i }));
 
     expect(screen.getByText(/mexico 2 - canada 1/i)).toBeInTheDocument();
+  });
+
+  it("orders matches by total score", () => {
+    render(<ScoreboardView />);
+    setupMatch("Mexico", "Canada");
+    setupMatch("Spain", "Brazil");
+  
+    fireEvent.click(screen.getAllByRole("button", { name: /edit/i })[1]);
+    fireEvent.change(screen.getByLabelText(/mexico score/i), {
+      target: { value: "1" },
+    });
+    fireEvent.change(screen.getByLabelText(/canada score/i), {
+      target: { value: "1" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /update score/i }));
+  
+    // Mexico vs Canada has total 2, should be listed first
+    const items = screen.getAllByRole("listitem").map((li) => li.textContent);
+    expect(items[0]).toMatch(/mexico 1 - canada 1/i);
   });
 });
 

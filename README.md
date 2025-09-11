@@ -1,6 +1,19 @@
 # Live Football World Cup Scoreboard (Library)
 
-A simple React + TS library of a **Live Football World Cup Scoreboard**.  
+A simple React + TS library of a **Live Football World Cup Scoreboard**.
+
+## Features
+
+- Start a match (with team names)
+- See running summary of matches
+- Finish a match (removes it from summary)
+- Update score of a running match
+
+## Tech Stack
+
+- React 19 + TypeScript
+- Vite for dev/build
+- Jest + @testing-library/react for TDD
 
 ## Getting Started
 

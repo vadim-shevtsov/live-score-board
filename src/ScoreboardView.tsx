@@ -1,34 +1,32 @@
 import React, { useState } from "react";
-import { Scoreboard } from "./Scoreboard";
-import type { Match } from "./Scoreboard";
+import { useScoreboard } from "./useScoreboard";
 
 export const ScoreboardView: React.FC = () => {
-  const [board] = useState(() => new Scoreboard());
-  const [matches, setMatches] = useState<Match[]>([]);
+  const {
+    matches,
+    activeMatchId,
+    setActiveMatchId,
+    startMatch,
+    finishMatch,
+    updateScore,
+  } = useScoreboard();
+
   const [home, setHome] = useState("");
   const [away, setAway] = useState("");
   const [homeScore, setHomeScore] = useState("");
   const [awayScore, setAwayScore] = useState("");
-  const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    board.startMatch(home, away);
+    startMatch(home, away);
     setHome("");
     setAway("");
-    setMatches(board.getSummary());
-  };
-
-  const handleFinish = (id: string) => {
-    board.finishMatch(id);
-    setMatches(board.getSummary());
   };
 
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeMatchId) return;
-    board.updateScore(activeMatchId, Number(homeScore), Number(awayScore));
-    setMatches(board.getSummary());
+    updateScore(activeMatchId, Number(homeScore), Number(awayScore));
     setHomeScore("");
     setAwayScore("");
     setActiveMatchId(null);
@@ -63,7 +61,7 @@ export const ScoreboardView: React.FC = () => {
         {matches.map((m) => (
           <li key={m.id}>
             {m.home} {m.homeScore} - {m.away} {m.awayScore}
-            <button onClick={() => handleFinish(m.id)}>Finish Match</button>
+            <button onClick={() => finishMatch(m.id)}>Finish Match</button>
             <button
               onClick={() => {
                 setActiveMatchId(m.id);
