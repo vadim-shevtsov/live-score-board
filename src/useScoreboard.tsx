@@ -6,10 +6,17 @@ export const useScoreboard = () => {
   const [board] = useState(() => new Scoreboard());
   const [matches, setMatches] = useState<Match[]>([]);
   const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const startMatch = (home: string, away: string) => {
-    board.startMatch(home, away);
+    const ok = board.startMatch(home, away);
+    if (!ok) {
+      setError("Invalid match. Teams must be non-empty, different, and not already playing.");
+      return false;
+    }
+    setError(null);
     setMatches(board.getSummary());
+    return true;
   };
 
   const finishMatch = (id: string) => {
@@ -18,8 +25,14 @@ export const useScoreboard = () => {
   };
 
   const updateScore = (id: string, homeScore: number, awayScore: number) => {
-    board.updateScore(id, homeScore, awayScore);
+    const ok = board.updateScore(id, homeScore, awayScore);
+    if (!ok) {
+      setError("Invalid score update. Scores must be non-negative.");
+      return false;
+    }
+    setError(null);
     setMatches(board.getSummary());
+    return true;
   };
 
   return {
@@ -29,5 +42,6 @@ export const useScoreboard = () => {
     startMatch,
     finishMatch,
     updateScore,
+    error,
   };
 };

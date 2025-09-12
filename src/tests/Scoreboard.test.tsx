@@ -73,5 +73,28 @@ describe("ScoreboardView", () => {
     const items = screen.getAllByRole("listitem").map((li) => li.textContent);
     expect(items[0]).toMatch(/mexico 1 - canada 1/i);
   });
+
+  it("shows error if teams are the same", () => {
+    render(<ScoreboardView />);
+    setupMatch("Canada", "Canada");
+  
+    expect(screen.getByText(/invalid match/i)).toBeInTheDocument();
+  });
+
+  it("shows error if team names are empty", () => {
+    render(<ScoreboardView />);
+    setupMatch("", "Canada");
+    expect(screen.getByText(/invalid match/i)).toBeInTheDocument();
+  });
+
+  it("shows error if a team is already playing in another match", () => {
+    render(<ScoreboardView />);
+    setupMatch("Mexico", "Canada");
+    expect(screen.getByText(/mexico 0 - canada 0/i)).toBeInTheDocument();
+  
+    // Try to reuse "Mexico"
+    setupMatch("Mexico", "Brazil");
+    expect(screen.getByText(/invalid match/i)).toBeInTheDocument();
+  });
 });
 

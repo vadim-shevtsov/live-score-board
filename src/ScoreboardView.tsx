@@ -9,6 +9,7 @@ export const ScoreboardView: React.FC = () => {
     startMatch,
     finishMatch,
     updateScore,
+    error,
   } = useScoreboard();
 
   const [home, setHome] = useState("");
@@ -54,26 +55,31 @@ export const ScoreboardView: React.FC = () => {
           />
         </label>
         <button type="submit">Start Match</button>
+        {error && <p className="error-message">{error}</p>}
       </form>
 
-      <h3>Summary</h3>
-      <ul>
-        {matches.map((m) => (
-          <li key={m.id}>
-            {m.home} {m.homeScore} - {m.away} {m.awayScore}
-            <button onClick={() => finishMatch(m.id)}>Finish Match</button>
-            <button
-              onClick={() => {
-                setActiveMatchId(m.id);
-                setHomeScore(String(m.homeScore));
-                setAwayScore(String(m.awayScore));
-              }}
-            >
-              Edit
-            </button>
-          </li>
-        ))}
-      </ul>
+      {matches.length > 0 && (
+        <>
+          <h3>Summary</h3>
+          <ul>
+            {matches.map((m) => (
+              <li key={m.id}>
+                {m.home} {m.homeScore} - {m.away} {m.awayScore}
+                <button onClick={() => finishMatch(m.id)}>Finish Match</button>
+                <button
+                  onClick={() => {
+                    setActiveMatchId(m.id);
+                    setHomeScore(String(m.homeScore));
+                    setAwayScore(String(m.awayScore));
+                  }}
+                >
+                  Edit
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
       {activeMatchId && (
         <form onSubmit={handleUpdate}>

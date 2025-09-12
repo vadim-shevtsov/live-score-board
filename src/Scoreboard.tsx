@@ -13,7 +13,15 @@ export class Scoreboard {
   private idCounter = 0;
 
   startMatch(home: string, away: string) {
-    if (!home.trim() || !away.trim() || home === away) return;
+    if (!home.trim() || !away.trim() || home.toLowerCase() === away.toLowerCase()) {
+      return false;
+    }
+
+    // prevent duplicate teams (a team cannot play two matches simultaneously)
+    const teamAlreadyPlaying = this.matches.some(
+      (m) => m.home === home || m.away === home || m.home === away || m.away === away
+    );
+    if (teamAlreadyPlaying) return false;
 
     const match: Match = {
       id: String(++this.idCounter),
@@ -24,18 +32,21 @@ export class Scoreboard {
       order: ++this.seq,
     };
     this.matches.push(match);
+    return true;
   }
 
   finishMatch(id: string) {
     this.matches = this.matches.filter((m) => m.id !== id);
   }
 
-  updateScore(id: string, homeScore: number, awayScore: number) {
+  updateScore(id: string, homeScore: number, awayScore: number): boolean {
     const match = this.matches.find((m) => m.id === id);
-    if (match && homeScore >= 0 && awayScore >= 0) {
-      match.homeScore = homeScore;
-      match.awayScore = awayScore;
-    }
+    if (!match) return false;
+    if (homeScore < 0 || awayScore < 0) return false;
+  
+    match.homeScore = homeScore;
+    match.awayScore = awayScore;
+    return true;
   }
 
   getSummary(): Match[] {
