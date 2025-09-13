@@ -4,10 +4,13 @@ A simple React + TS library of a **Live Football World Cup Scoreboard**.
 
 ## Features
 
-- Start a match (with team names)
+- Start a match (with team names, initial score 0–0)
 - See running summary of matches
 - Finish a match (removes it from summary)
 - Update score of a running match
+- Summary is ordered by:
+  1. Highest total score
+  2. If tied - most recently started match
 
 ## Tech Stack
 

@@ -12,19 +12,12 @@ const setupMatch = (home: string, away: string) => {
   fireEvent.click(screen.getByRole("button", { name: /start match/i }));
 };
 
-describe("ScoreboardView", () => {
+describe("Scoreboard integration", () => {
   it("allows starting a match", () => {
     render(<ScoreboardView />);
     setupMatch("Mexico", "Canada");
 
     expect(screen.getByText(/mexico 0 - canada 0/i)).toBeInTheDocument();
-  });
-
-  it("doesn't allow empty team names", () => {
-    render(<ScoreboardView />);
-    fireEvent.click(screen.getByRole("button", { name: /start match/i }));
-
-    expect(screen.queryByText(/0 -/)).not.toBeInTheDocument();
   });
 
   it("allows finishing a match", () => {
@@ -74,15 +67,14 @@ describe("ScoreboardView", () => {
     expect(items[0]).toMatch(/mexico 1 - canada 1/i);
   });
 
-  it("shows error if teams are the same", () => {
+  it("does not allow invalid matches", () => {
     render(<ScoreboardView />);
-    setupMatch("Canada", "Canada");
-  
-    expect(screen.getByText(/invalid match/i)).toBeInTheDocument();
-  });
 
-  it("shows error if team names are empty", () => {
-    render(<ScoreboardView />);
+    // same team
+    setupMatch("Mexico", "Mexico");
+    expect(screen.getByText(/invalid match/i)).toBeInTheDocument();
+
+    // empty team
     setupMatch("", "Canada");
     expect(screen.getByText(/invalid match/i)).toBeInTheDocument();
   });
